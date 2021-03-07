@@ -28,9 +28,16 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
 
-
+@app.route('/secure-page')
+@login_required
+def secure_page():
+    """Render a secure page"""
+    return render_template('secure_page.html')
+    
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect (url_for("secure_page"))
     form = LoginForm()
     if request.method == "POST":
         if form.validate_on_submit():
@@ -87,11 +94,7 @@ def flash_errors(form):
                 error
             ), 'danger')
 
-@app.route('/secure-page')
-@login_required
-def secure_page():
-    """Render a secure page"""
-    return render_template('secure_page.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port="8080")
